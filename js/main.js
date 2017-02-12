@@ -16,6 +16,8 @@ $(function() {
     var easing = 0.05;
     var init = true;
 
+    var mouse = new Two.Vector();
+
     $('#assets svg').each(function(i, el) {
       var shape = two.interpret(el);
 
@@ -32,18 +34,63 @@ $(function() {
     });
 
     _.times(50, function(n) {
-      var dot = two.makeCircle(_.random(0, two.width), _.random(0, two.height), _.random(1,4));
+      var size = _.random(1,10)
+      var dot = two.makeCircle(_.random(0, two.width), _.random(0, two.height), size*2);
       dot.noStroke();
-      dot.opacity = Math.random();
-      dot.velocity = new Two.Vector(dot.opacity * 5, dot.opacity * 5);
+      dot.opacity = parseFloat(size/10);
+      dot.velocity = new Two.Vector(dot.opacity * 15 - _.random(15), dot.opacity * 15 - _.random(15));
+      console.log(dot.velocity);
       dot.fill = 'white';
       dot.rect = dot.getBoundingClientRect();
       dots.push(dot);
     });
 
-    console.log(dots)
+    var $window = $(window)
+      .bind('mousemove', function(e) {
+        mouse.x = two.width / 2 - e.clientX;
+        mouse.y = two.height / 2 - e.clientY;
+      })
+      .bind('touchstart', function() {
+        e.preventDefault();
+        return false;
+      })
+      .bind('touchmove', function(e) {
+        e.preventDefault();
+        var touch = e.originalEvent.changedTouches[0];
+        mouse.x = touch.pageX;
+        mouse.y = touch.pageY;
+        return false;
+      });
+
+      var updateDots = function() {
+        _.each(dots, function(particle) {
+
+          var w = particle.scale * particle.rect.width / 2;
+          var h = particle.scale * particle.rect.height / 2;
+
+          var newVect = mouse.clone()
+          newVect.multiplyScalar(0.02).addSelf(particle.velocity).multiplyScalar(0.5)
+          particle.translation.addSelf(newVect)
 
 
+          if (particle.translation.x > two.width) particle.translation.x = 0;
+          if (particle.translation.x < 0) particle.translation.x = two.width;
+          if (particle.translation.y > two.height) particle.translation.y = 0;
+          if (particle.translation.y < 0) particle.translation.y = two.height;
+
+          // if ((particle.translation.x < w && particle.velocity.x < 0)
+          //   || (particle.translation.x > two.width - w && particle.velocity.x > 0)) {
+          //   particle.velocity.x *= -1;
+          // }
+
+          // if ((particle.translation.y < h && particle.velocity.y < 0)
+          //   || (particle.translation.y > two.height - h && particle.velocity.y > 0)) {
+          //   particle.velocity.y *= -1;
+          // }
+
+        });
+
+      };
 
     length = shapes.length;
 
@@ -60,33 +107,9 @@ $(function() {
     });
 
     two.bind('update', function(frameCount) {
+        updateDots();
+      // console.log(two.scene.children.length)
 
-
-      var shape = shapes[index];
-      shape.scale = ((two.width + 100) < 640 ) ? 0.5 : 1;
-
-      _.each(dots, function(particle) {
-
-          var w = particle.scale * particle.rect.width / 2;
-          var h = particle.scale * particle.rect.height / 2;
-
-          particle.translation.addSelf(particle.velocity)
-
-          if ((particle.translation.x < w && particle.velocity.x < 0)
-            || (particle.translation.x > two.width - w && particle.velocity.x > 0)) {
-            particle.velocity.x *= -1;
-          }
-
-          if ((particle.translation.y < h && particle.velocity.y < 0)
-            || (particle.translation.y > two.height - h && particle.velocity.y > 0)) {
-            particle.velocity.y *= -1;
-          }
-
-      });
-
-      console.log(two.scene.children.length)
-
-      // console.log(two.scene.children.length);
 
     });
 
