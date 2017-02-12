@@ -25,23 +25,29 @@ $(function() {
       shape.visible = true;
       shape.scale = ((two.width + 100) < 640 ) ? 0.5 : 1;
       shape.noStroke();
-      var h_padding = (two.width - (shape.getBoundingClientRect().width * shape.scale)) / 2,
-          v_padding = (two.height - (shape.getBoundingClientRect().height * shape.scale)) / 2;
+      var h_padding = (two.width - (shape.getBoundingClientRect(true).width * shape.scale)) / 2,
+          v_padding = (two.height - (shape.getBoundingClientRect(true).height * shape.scale)) / 2;
       shape.translation.set(h_padding, v_padding);
       shapes.push(shape);
 
     });
 
-    _.times(50, function(n) {
-      var size = _.random(1,10)
-      var dot = two.makeCircle(_.random(0, two.width), _.random(0, two.height), size*2);
-      dot.noStroke();
-      dot.opacity = parseFloat(size/10);
-      dot.velocity = new Two.Vector(dot.opacity * 15 - _.random(15), dot.opacity * 15 - _.random(15));
-      dot.fill = 'white';
-      dot.rect = dot.getBoundingClientRect();
-      dots.push(dot);
-    });
+    var addDots = function(num) {
+      dots = [];
+      _.times(num, function(n) {
+        var size = _.random(1,10)
+        var dot = two.makeCircle(_.random(0, two.width), _.random(0, two.height), size*20);
+        dot.noStroke();
+        dot.opacity = parseFloat(size/20);
+        dot.velocity = new Two.Vector(dot.opacity * 15 - _.random(15), dot.opacity * 15 - _.random(15));
+        dot.fill = 'white';
+        dot.rect = dot.getBoundingClientRect();
+        console.log(dot);
+        dots.push(dot);
+      });
+    };
+
+    addDots(15);
 
     var $window = $(window)
       .bind('mousemove', function(e) {
@@ -61,29 +67,29 @@ $(function() {
       });
 
       var updateDots = function() {
-        _.each(dots, function(particle) {
+        _.each(dots, function(dot) {
 
-          var w = particle.scale * particle.rect.width / 2;
-          var h = particle.scale * particle.rect.height / 2;
+          var w = dot.scale * dot.rect.width / 2;
+          var h = dot.scale * dot.rect.height / 2;
 
           var newVect = mouse.clone()
-          newVect.multiplyScalar(0.02).addSelf(particle.velocity).multiplyScalar(0.5)
-          particle.translation.addSelf(newVect)
+          newVect.multiplyScalar(0.02).addSelf(dot.velocity).multiplyScalar(0.1)
+          dot.translation.addSelf(newVect)
 
 
-          if (particle.translation.x > two.width) particle.translation.x = 0;
-          if (particle.translation.x < 0) particle.translation.x = two.width;
-          if (particle.translation.y > two.height) particle.translation.y = 0;
-          if (particle.translation.y < 0) particle.translation.y = two.height;
+          if (dot.translation.x - dot.rect.width > two.width) dot.translation.x = 0 - dot.rect.width;
+          if (dot.translation.x + dot.rect.width < 0) dot.translation.x = two.width + dot.rect.width;
+          if (dot.translation.y - dot.rect.height > two.height) dot.translation.y = 0 - dot.rect.height;
+          if (dot.translation.y + dot.rect.height < 0) dot.translation.y = two.height + dot.rect.height;
 
-          // if ((particle.translation.x < w && particle.velocity.x < 0)
-          //   || (particle.translation.x > two.width - w && particle.velocity.x > 0)) {
-          //   particle.velocity.x *= -1;
+          // if ((dot.translation.x < w && dot.velocity.x < 0)
+          //   || (dot.translation.x > two.width - w && dot.velocity.x > 0)) {
+          //   dot.velocity.x *= -1;
           // }
 
-          // if ((particle.translation.y < h && particle.velocity.y < 0)
-          //   || (particle.translation.y > two.height - h && particle.velocity.y > 0)) {
-          //   particle.velocity.y *= -1;
+          // if ((dot.translation.y < h && dot.velocity.y < 0)
+          //   || (dot.translation.y > two.height - h && dot.velocity.y > 0)) {
+          //   dot.velocity.y *= -1;
           // }
 
         });

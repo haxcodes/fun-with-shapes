@@ -79,3 +79,14 @@ body {
 #draw-animation #o {
   mix-blend-mode: difference;
 }
+
+.coming-soon {
+  color: white;
+  font-family: 'Roboto', sans-serif;
+  font-weight: 300;
+  letter-spacing: 4px;
+  font-size: 1.3em;
+  position: relative;
+  top: 70%;
+  text-align: center;
+}
