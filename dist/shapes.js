@@ -27,7 +27,6 @@ $(function() {
       shape.noStroke();
       var h_padding = (two.width - (shape.getBoundingClientRect().width * shape.scale)) / 2,
           v_padding = (two.height - (shape.getBoundingClientRect().height * shape.scale)) / 2;
-        console.log(two.width, two.height);
       shape.translation.set(h_padding, v_padding);
       shapes.push(shape);
 
@@ -39,7 +38,6 @@ $(function() {
       dot.noStroke();
       dot.opacity = parseFloat(size/10);
       dot.velocity = new Two.Vector(dot.opacity * 15 - _.random(15), dot.opacity * 15 - _.random(15));
-      console.log(dot.velocity);
       dot.fill = 'white';
       dot.rect = dot.getBoundingClientRect();
       dots.push(dot);
@@ -101,7 +99,7 @@ $(function() {
 
       var h_padding = (two.width - (shape.getBoundingClientRect(true).width * shape.scale)) / 2,
           v_padding = (two.height - (shape.getBoundingClientRect(true).height * shape.scale)) / 2;
-        console.log(two.width, two.height);
+        // console.log(two.width, two.height);
 
       shape.translation.set(h_padding, v_padding);
     });
